@@ -13,7 +13,8 @@
 workspace("PeanutButterAddict")
 configurations({ "debug", "release" })
 location("build")
-toolset("clang")
+toolset("clang") -- Comment for gcc instead.
+
 
 project("focus_calculator")
 kind("ConsoleApp")
