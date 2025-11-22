@@ -1,14 +1,14 @@
 -- To use fil-c compiler
--- local prefix = path.getabsolute("../filc-0.674-linux-x86_64/build/bin")
--- local clang = premake.tools.clang
---
--- clang.tools = {
--- 	cc = prefix .. "/clang",
--- }
---
--- function clang.gettoolname(cfg, tool)
--- 	return clang.tools[tool]
--- end
+local prefix = path.getabsolute("../filc-0.674-linux-x86_64/build/bin")
+local clang = premake.tools.clang
+
+clang.tools = {
+	cc = prefix .. "/clang",
+}
+
+function clang.gettoolname(cfg, tool)
+	return clang.tools[tool]
+end
 
 workspace("PeanutButterAddict")
 configurations({ "debug", "release" })
