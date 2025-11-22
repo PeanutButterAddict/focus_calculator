@@ -9,36 +9,6 @@ struct time {
   int minutes;
 };
 
-struct time convert_to_time(int time_in_min);
-int calculte_distraction_time(const char *start_time_str,
-                              const char *end_time_str);
-int calculate_total_time_min(const char *start_time_str,
-                             const char *end_time_str);
-int calculate_distraction_from_list(const char *distraction_list);
-
-int main(int argc, char *argv[]) {
-  if (argc == 3) {
-    int distraction_min = calculte_distraction_time(argv[1], argv[2]);
-    struct time distraction = convert_to_time(distraction_min);
-    printf("Distraction Time: %d min, %d:%d hrs\n", distraction_min,
-           distraction.hours, distraction.minutes);
-    return 0;
-  }
-  assert(argc == 4);
-  int total_time_min = calculate_total_time_min(argv[1], argv[2]);
-  struct time total_time = convert_to_time(total_time_min);
-  printf("Total Time: %d min, %d:%d hrs\n", total_time_min, total_time.hours,
-         total_time.minutes);
-  int distraction_min = calculate_distraction_from_list(argv[3]);
-  struct time distraction = convert_to_time(distraction_min);
-  printf("Distraction: %d mins, %d:%d hrs\n", distraction_min,
-         distraction.hours, distraction.minutes);
-  int focus_min = total_time_min - distraction_min;
-  struct time focus = convert_to_time(focus_min);
-  printf("Focus: %d mins, %d:%d hrs\n", focus_min, focus.hours, focus.minutes);
-  return 0;
-}
-
 struct time convert_to_time(int time_in_min) {
   struct time t = {0};
   t.hours = time_in_min / 60;
@@ -100,3 +70,28 @@ int calculate_distraction_from_list(const char *distraction_list) {
   }
   return total_distraction;
 };
+
+
+int main(int argc, char *argv[]) {
+  if (argc == 3) {
+    int distraction_min = calculte_distraction_time(argv[1], argv[2]);
+    struct time distraction = convert_to_time(distraction_min);
+    printf("Distraction Time: %d min, %d:%d hrs\n", distraction_min,
+           distraction.hours, distraction.minutes);
+    return 0;
+  }
+  assert(argc == 4);
+  int total_time_min = calculate_total_time_min(argv[1], argv[2]);
+  struct time total_time = convert_to_time(total_time_min);
+  printf("Total Time: %d min, %d:%d hrs\n", total_time_min, total_time.hours,
+         total_time.minutes);
+  int distraction_min = calculate_distraction_from_list(argv[3]);
+  struct time distraction = convert_to_time(distraction_min);
+  printf("Distraction: %d mins, %d:%d hrs\n", distraction_min,
+         distraction.hours, distraction.minutes);
+  int focus_min = total_time_min - distraction_min;
+  struct time focus = convert_to_time(focus_min);
+  printf("Focus: %d mins, %d:%d hrs\n", focus_min, focus.hours, focus.minutes);
+  return 0;
+}
+
