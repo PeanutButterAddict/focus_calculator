@@ -3,10 +3,10 @@ const focus_calculator = @import("focus_calculator");
 const Allocator = std.mem.Allocator;
 
 const Time = struct {
-    hour: u16,
-    minute: u16,
+    hour: u32,
+    minute: u32,
 
-    fn initFromTotalMin(total_min: u16) Time {
+    fn initFromTotalMin(total_min: u32) Time {
         return .{
             .hour = total_min / 60,
             .minute = total_min % 60,
@@ -27,12 +27,12 @@ const Time = struct {
             @panic("Please keep Time in XX:XX format.");
         }
         return .{
-            .hour = try std.fmt.parseUnsigned(u8, strings.items[0], 10),
-            .minute = try std.fmt.parseUnsigned(u8, strings.items[1], 10),
+            .hour = try std.fmt.parseUnsigned(u32, strings.items[0], 10),
+            .minute = try std.fmt.parseUnsigned(u32, strings.items[1], 10),
         };
     }
 
-    fn toTotalMinutes(self: Time) u16 {
+    fn toTotalMinutes(self: Time) u32 {
         return self.hour * 60 + self.minute;
     }
 
@@ -72,9 +72,9 @@ pub fn main() !void {
     }
     // Calculate Distraction Time fom 3rd Arg
     var dist_str_it = std.mem.splitScalar(u8, args.items[2], ',');
-    var dist_total_min: u16 = 0;
+    var dist_total_min: u32 = 0;
     while (dist_str_it.next()) |str| {
-        dist_total_min += try std.fmt.parseUnsigned(u8, str, 10);
+        dist_total_min += try std.fmt.parseUnsigned(u32, str, 10);
     }
     const dist_time = Time.initFromTotalMin(dist_total_min);
     const total_time = Time.initFromTotalMin(end_time.toTotalMinutes() - start_time.toTotalMinutes());
