@@ -42,36 +42,33 @@ const Time = struct {
     }
 };
 
-pub fn main() !void {
-    // Allocator
-    var gpa = std.heap.GeneralPurposeAllocator(.{}).init;
-    const allocator = gpa.allocator();
-    // Args array
-    var args_it = try std.process.argsWithAllocator(allocator);
+pub fn main(init: std.process.Init) !void {
+    const allocator = init.arena.allocator();
+    var args_it = try init.minimal.args.iterateAllocator(allocator);
     defer args_it.deinit();
     _ = args_it.skip();
-    var args = try std.ArrayList([]const u8).initCapacity(allocator, 3);
+    var arg_list = try std.ArrayList([]const u8).initCapacity(allocator, 3);
     while (args_it.next()) |arg| {
         const arg_non_sentinel: []const u8 = arg[0..arg.len];
-        try args.append(allocator, arg_non_sentinel);
+        try arg_list.append(allocator, arg_non_sentinel);
     }
-    if (args.items.len < 2) {
+    if (arg_list.items.len < 2) {
         std.debug.print("Give at least 2 to 3 args for results. \n", .{});
         return;
     }
-    if (args.items.len > 3) {
+    if (arg_list.items.len > 3) {
         std.debug.print("Not more than 3 args for results. \n", .{});
         return;
     }
-    const start_time = try Time.initFromString(allocator, args.items[0]);
-    const end_time = try Time.initFromString(allocator, args.items[1]);
-    if (args.items.len <= 2) {
+    const start_time = try Time.initFromString(allocator, arg_list.items[0]);
+    const end_time = try Time.initFromString(allocator, arg_list.items[1]);
+    if (arg_list.items.len <= 2) {
         const dist_time = Time.initFromTotalMin(end_time.toTotalMinutes() - start_time.toTotalMinutes());
-        std.debug.print("Distraction: {d}:{d}, {d} mins \n", .{ dist_time.hour, dist_time.minute, dist_time.toTotalMinutes() });
+        std.debug.print("Distraction: {d} mins , {d} hrs {d} mins\n", .{ dist_time.toTotalMinutes(), dist_time.hour, dist_time.minute });
         return;
     }
     // Calculate Distraction Time fom 3rd Arg
-    var dist_str_it = std.mem.splitScalar(u8, args.items[2], ',');
+    var dist_str_it = std.mem.splitScalar(u8, arg_list.items[2], ',');
     var dist_total_min: u32 = 0;
     while (dist_str_it.next()) |str| {
         dist_total_min += try std.fmt.parseUnsigned(u32, str, 10);
@@ -83,5 +80,5 @@ pub fn main() !void {
         return;
     }
     const focus_time = Time.initFromTotalMin(total_time.toTotalMinutes() - dist_time.toTotalMinutes());
-    std.debug.print("Total: {d}:{d}, {d} mins, Distraction: {d}:{d}, {d} mins, Focus: {d}:{d}, {d} mins \n", .{ total_time.hour, total_time.minute, total_time.toTotalMinutes(), dist_time.hour, dist_time.minute, dist_time.toTotalMinutes(), focus_time.hour, focus_time.minute, focus_time.toTotalMinutes() });
+    std.debug.print("Total: {d} mins, {d} hrs {d} mins, Distraction: {d} mins, {d} hrs {d} mins, Focus:  {d} mins, {d} hrs {d} mins \n", .{ total_time.toTotalMinutes(), total_time.hour, total_time.minute, dist_time.toTotalMinutes(), dist_time.hour, dist_time.minute, focus_time.toTotalMinutes(), focus_time.hour, focus_time.minute });
 }
